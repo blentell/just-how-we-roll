@@ -6,7 +6,8 @@ const sixes = [];
 const doubleSixes = [];
 const twelves = [];
 const twenties = [];
-
+let totalCount = 0;
+let allCount = 0;
 /********************
  * HELPER FUNCTIONS *
  ********************/
@@ -26,12 +27,54 @@ const sortByNumber = function (arr) {
 	return arr.slice().sort(byNumber);
 };
 
-clearTheBoard();
 
 /*******************
  * YOUR CODE BELOW *
  *******************/
+// Lets make a button to run rolls 10 times ====================================
+const rollAll = document.querySelector('#app');
+const addButton = document.createElement('button');
+addButton.innerText = "Roll all 10 times!";
+addButton.style.height = '200px';
+addButton.style.width = '200px';
+addButton.style.backgroundColor = "limegreen";
+addButton.style.fontSize = '40px';
+addButton.style.fontWeight = 'bolder';
+addButton.style.borderRadius = '200px';
+rollAll.appendChild(addButton);
 
+// Lets make a counter to track the number of rolls ============================
+const rollCounter = document.querySelector("#app");
+const addButton2 = document.createElement("button");
+addButton2.innerHTML = 0;
+addButton2.id = 'counter';
+addButton2.style.height = "200px";
+addButton2.style.width = "200px";
+addButton2.style.backgroundColor = "lightgray";
+addButton2.style.fontSize = "40px";
+addButton2.style.fontWeight = "bolder";
+addButton2.style.borderRadius = "200px";
+rollCounter.appendChild(addButton2);
+
+// Create a function for rolling everything ====================================
+
+function rollAll10() {
+	whoGoesFirst();
+	snakeEyes();
+	rollForDamage();
+	rollInitiative();
+	totalCount++;
+	addButton2.innerHTML = totalCount;
+	if (allCount === 10) {
+		allCount = 0;
+	}
+	if (allCount++ != 9) {
+		setTimeout(rollAll10, 1000);
+	}
+}
+
+addButton.addEventListener('click', rollAll10);
+clearTheBoard();
 /*******************
  * EVENT LISTENERS *
  *******************/
@@ -40,9 +83,6 @@ d6click.addEventListener("click", whoGoesFirst);
 
 const doubled6click = document.querySelector("#double-d6");
 doubled6click.addEventListener("click", snakeEyes);
-
-// const doubled6click2 = document.querySelector("#double-d6-roll-2");
-// d6click.addEventListener("click", snakeEyes);
 
 const d12click = document.querySelector("#d12-roll");
 d12click.addEventListener("click", rollForDamage);
@@ -62,7 +102,9 @@ function clearTheBoard() {
 	doubleSixes.length = 0;
 	twelves.length = 0;
 	twenties.length = 0;
-
+	addButton2.innerHTML = 0;
+	totalCount = 0;
+	allCount = 0;
 	// change the dice buttons back to starting image ============================
 	const d6Image = document.querySelector("#d6-roll");
 	d6Image.src = "./images/start/d6.png";
@@ -197,10 +239,15 @@ function calculateAverage(array) {
 
 // Calculate the median ========================================================
 function calculateMedian(array) {
+// Make a variable for the sorting function ====================================
 	let sortedArray = sortByNumber(array);
+// Make a variable for the middle number =======================================
 	let median = Math.floor((sortedArray.length - 1) / 2);
+// Odd and even length arrays act differently for this apparently ==============
+	// If it is even, we can just return the middle number =====================
 	if (sortedArray.length % 2) {
 		return sortedArray[median];
+	// If it is odd, average the middle two numbers ============================
 	} else {
 		return (sortedArray[median] + sortedArray[median + 1]) / 2;
 	}
@@ -208,20 +255,27 @@ function calculateMedian(array) {
 
 // Calculate the mode ==========================================================
 function calculateMode(array) {
+	// Create an object ========================================================
 	let frequency = {};
+	// Make a way to store the high number =====================================
 	let high = 0;
 	let highKey = -Infinity;
-
+	// Look at each number in the array ========================================
 	array.forEach((number) => {
+	// If there is no key value pair already, create one =======================
 		if (!frequency[number]) {
 			frequency[number] = 1;
+	// Otherwise, add 1 to the times that number has been seen =================
 		} else {
 			frequency[number] += 1;
 		}
 	});
 	console.log(frequency);
+	// Loop through the key value pairs ========================================
 	for (let key in frequency) {
+	// Create a variable for the key value pairs ===============================
 		const value = frequency[key];
+	// Check which key value pair is the highest ===============================
 		if (value > high) {
 			high = value;
 			highKey = key;
